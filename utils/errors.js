@@ -2,25 +2,19 @@ const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const INTERNAL_SERVER_ERROR = 500;
 
-class BadRequestError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = BAD_REQUEST;
-  }
+function BadRequestError(message) {
+  this.statusCode = BAD_REQUEST;
+  this.message = message;
 }
 
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = NOT_FOUND;
-  }
+function NotFoundError(message) {
+  this.statusCode = NOT_FOUND;
+  this.message = message;
 }
 
-class InternalServerError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = INTERNAL_SERVER_ERROR;
-  }
+function InternalServerError(message) {
+  this.statusCode = INTERNAL_SERVER_ERROR;
+  this.message = message;
 }
 
 module.exports = { BadRequestError, NotFoundError, InternalServerError };

@@ -11,7 +11,7 @@ const createItem = (req, res) => {
 
   const { name, weather, imageURL } = req.body;
 
-  ClothingItem.create({ name, weather, imageURL })
+  return ClothingItem.create({ name, weather, imageURL })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
@@ -23,6 +23,9 @@ const createItem = (req, res) => {
           .status(BadRequestError.statusCode)
           .send({ message: "Invalid data provided" });
       }
+      return res
+        .status(InternalServerError.statusCode)
+        .send({ message: "An error occurred on the server" });
     });
 };
 
@@ -76,9 +79,9 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   console.log(itemId);
-  ClothingItem.findByIdAndDelete(itemId)
+  return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
+    .then(() => res.status(204).send({}))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

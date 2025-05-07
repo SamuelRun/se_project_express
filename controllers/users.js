@@ -17,7 +17,7 @@ const getUsers = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  User.create({ name, avatar })
+  return User.create({ name, avatar })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
@@ -25,8 +25,10 @@ const createUser = (req, res) => {
         return res
           .status(BadRequestError.statusCode)
           .send({ message: "Invalid data provided" });
-      } 
-      
+      }
+      return res
+        .status(InternalServerError.statusCode)
+        .send({ message: "An error occurred on the server" });
     });
 };
 

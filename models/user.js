@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { validate } = require("./clothingItems");
 
 const userSchema = new mongoose.Schema({
   name: {
