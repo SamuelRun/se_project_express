@@ -7,14 +7,20 @@ function BadRequestError(message) {
   this.message = message;
 }
 
+BadRequestError.statusCode = BAD_REQUEST;
+
 function NotFoundError(message) {
   this.statusCode = NOT_FOUND;
   this.message = message;
 }
 
+NotFoundError.statusCode = NOT_FOUND;
+
 function InternalServerError(message) {
   this.statusCode = INTERNAL_SERVER_ERROR;
   this.message = message;
 }
+
+InternalServerError.statusCode = INTERNAL_SERVER_ERROR;
 
 module.exports = { BadRequestError, NotFoundError, InternalServerError };
