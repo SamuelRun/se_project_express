@@ -77,22 +77,17 @@ const updateItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const {itemId} = req.params;
+  const { itemId } = req.params;
 
   return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then(() => res.status(200).json({ message: "Item deleted successfully" }))
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
+      if (err.name === "DocumentNotFoundError" || err.name === "CastError") {
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(BadRequestError.statusCode)
-          .json({ message: "Invalid item ID" });
       }
       return res
         .status(InternalServerError.statusCode)
