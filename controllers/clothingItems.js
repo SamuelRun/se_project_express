@@ -80,14 +80,16 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   return ClothingItem.findByIdAndDelete(itemId)
-    .then(() => res.status(200).json({ message: "Item deleted successfully" }))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
+    .then((item) => {
+      if (!item) {
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
       }
+      res.status(200).json({ message: "Item deleted successfully" });
+    })
+    .catch((err) => {
+      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
