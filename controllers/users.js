@@ -10,7 +10,9 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res
+        .status(InternalServerError.statusCode)
+        .json({ message: "An error occurred on the server" });
     });
 };
 
@@ -24,11 +26,11 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 
@@ -42,16 +44,16 @@ const getUser = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "User not found" });
+          .json({ message: "User not found" });
       }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid user ID" });
+          .json({ message: "Invalid user ID" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 

@@ -89,13 +89,18 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then(() => res.status(204).send({}))
+    .then(() => res.status(200).json({ message: "Item deleted succesfully" }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BadRequestError.statusCode)
+          .json({ message: "Invalid item ID" });
       }
       return res
         .status(InternalServerError.statusCode)
