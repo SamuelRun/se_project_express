@@ -81,16 +81,14 @@ const deleteItem = (req, res) => {
 
   return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then(() => res.status(200).json({ message: "Item deleted successfully" }))
+    .then((deletedItem) => res.status(200).json(deletedItem))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError" || err.name === "CastError") {
-        return res
-          .status(NotFoundError.statusCode)
-          .json({ message: "Item not found" });
+        return res.status(404).json({ message: "Item not found" });
       }
       return res
-        .status(InternalServerError.statusCode)
+        .status(500)
         .json({ message: "An error occurred on the server" });
     });
 };
