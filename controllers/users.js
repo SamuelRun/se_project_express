@@ -7,7 +7,7 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(200).json(users))
     .catch((err) => {
       console.error(err);
       return res
@@ -20,7 +20,7 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   return User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.status(201).json(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -38,7 +38,7 @@ const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(200).json(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

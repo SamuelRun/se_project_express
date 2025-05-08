@@ -6,9 +6,6 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   const { name, weather, imageURL } = req.body;
   if (!name || !weather || !imageURL) {
     return res.status(BadRequestError.statusCode).json({
@@ -19,10 +16,7 @@ const createItem = (req, res) => {
 
   return ClothingItem.create({ name, weather, imageURL, owner })
     .then((item) => {
-      res.status(201).json({
-        message: "Item created successfully",
-        data: item,
-      });
+      res.status(201).json(item);
     })
     .catch((err) => {
       console.error(err);
@@ -39,7 +33,7 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).json({ data: items }))
+    .then((items) => res.status(200).json(items))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -59,7 +53,7 @@ const updateItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -89,7 +83,7 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then(() => res.status(200).json({ message: "Item deleted succesfully" }))
+    .then(() => res.status(200).json({ message: "Item deleted" }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -115,7 +109,7 @@ const likeItem = (req, res) =>
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).json({ data: item }))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -140,7 +134,7 @@ const dislikeItem = (req, res) =>
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).json({ data: item }))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
