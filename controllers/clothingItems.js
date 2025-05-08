@@ -29,27 +29,27 @@ const createItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.status(200).json({ data: items }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "Item not found" });
+          .json({ message: "Item not found" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 
@@ -65,21 +65,21 @@ const updateItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "Item not found" });
+          .json({ message: "Item not found" });
       }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid item ID" });
+          .json({ message: "Invalid item ID" });
       }
       if (err.name === "ValidationError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid data provided" });
+          .json({ message: "Invalid data provided" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 
@@ -95,11 +95,11 @@ const deleteItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "Item not found" });
+          .json({ message: "Item not found" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 };
 
@@ -110,22 +110,22 @@ const likeItem = (req, res) =>
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.status(200).json({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "Item not found" });
+          .json({ message: "Item not found" });
       }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid item ID" });
+          .json({ message: "Invalid item ID" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 
 const dislikeItem = (req, res) =>
@@ -135,22 +135,22 @@ const dislikeItem = (req, res) =>
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => res.status(200).json({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NotFoundError.statusCode)
-          .send({ message: "Item not found" });
+          .json({ message: "Item not found" });
       }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
-          .send({ message: "Invalid item ID" });
+          .json({ message: "Invalid item ID" });
       }
       return res
         .status(InternalServerError.statusCode)
-        .send({ message: "An error occurred on the server" });
+        .json({ message: "An error occurred on the server" });
     });
 
 module.exports = {
