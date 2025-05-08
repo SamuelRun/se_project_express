@@ -14,13 +14,15 @@ mongoose
   .catch(console.error);
 
 app.use(express.json());
-app.use("/", mainRouter);
+
 app.use((req, res, next) => {
   req.user = {
     _id: "681b2397daa7f31828f9d9ef",
   };
   next();
 });
+
+app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
