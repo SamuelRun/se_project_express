@@ -86,7 +86,7 @@ const deleteItem = (req, res) => {
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
       }
-      res.status(200).json({ message: "Item deleted successfully" });
+      return res.status(200).json({ message: "Item deleted successfully" }); // Added "return" here
     })
     .catch((err) => {
       console.error(err);
