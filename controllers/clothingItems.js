@@ -13,7 +13,6 @@ const createItem = (req, res) => {
     });
   }
   const owner = req.user._id;
-
   return ClothingItem.create({ name, weather, imageURL, owner })
     .then((item) => {
       res.status(201).json(item.toObject());
@@ -78,9 +77,8 @@ const updateItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const { itemId } = req.params;
+  const { _id: itemId } = req.params;
 
-  console.log(itemId);
   return ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then(() => res.status(200).json({ message: "Item deleted" }))
