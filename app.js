@@ -1,10 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
-
 const app = express();
-
 const { PORT = 3001 } = process.env;
+const mainRouter = require("./routes/index");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
@@ -25,7 +23,3 @@ app.use("/", mainRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
-
-module.exports.createClothingItem = (req) => {
-  console.log(req.user._id);
-};
