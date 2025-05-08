@@ -79,9 +79,9 @@ const updateItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  return ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((deletedItem) => res.status(200).json(deletedItem))
+    .then((item) => res.status(200).json(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError" || err.name === "CastError") {
