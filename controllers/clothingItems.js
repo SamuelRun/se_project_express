@@ -10,11 +10,19 @@ const createItem = (req, res) => {
   console.log(req.body);
 
   const { name, weather, imageURL } = req.body;
+  if (!name || !weather || !imageURL) {
+    return res.status(BadRequestError.statusCode).json({
+      message: "Please provide name, weather and imageUrl",
+    });
+  }
+  const owner = req.user._id;
 
-  return ClothingItem.create({ name, weather, imageURL })
+  return ClothingItem.create({ name, weather, imageURL, owner })
     .then((item) => {
-      console.log(item);
-      res.send({ data: item });
+      res.status(201).json({
+        message: "Item created successfully",
+        data: item,
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -95,4 +103,61 @@ const deleteItem = (req, res) => {
     });
 };
 
-module.exports = { createItem, getItems, updateItem, deleteItem };
+const likeItem = (req, res) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.status(200).send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NotFoundError.statusCode)
+          .send({ message: "Item not found" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BadRequestError.statusCode)
+          .send({ message: "Invalid item ID" });
+      }
+      return res
+        .status(InternalServerError.statusCode)
+        .send({ message: "An error occurred on the server" });
+    });
+
+const dislikeItem = (req, res) =>
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.status(200).send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NotFoundError.statusCode)
+          .send({ message: "Item not found" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BadRequestError.statusCode)
+          .send({ message: "Invalid item ID" });
+      }
+      return res
+        .status(InternalServerError.statusCode)
+        .send({ message: "An error occurred on the server" });
+    });
+
+module.exports = {
+  createItem,
+  getItems,
+  updateItem,
+  deleteItem,
+  likeItem,
+  dislikeItem,
+};
