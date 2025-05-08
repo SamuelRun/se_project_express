@@ -16,7 +16,7 @@ const createItem = (req, res) => {
 
   return ClothingItem.create({ name, weather, imageURL, owner })
     .then((item) => {
-      res.status(201).json(item);
+      res.status(201).json(item.toObject());
     })
     .catch((err) => {
       console.error(err);
