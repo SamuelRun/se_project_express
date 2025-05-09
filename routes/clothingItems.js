@@ -3,13 +3,13 @@ const router = require("express").Router();
 const {
   createItem,
   getItems,
-  updateItem,
+  // updateItem,
   deleteItem,
   likeItem,
   dislikeItem,
 } = require("../controllers/clothingItems");
 
-router.put("/:itemId", updateItem);
+// router.put("/:itemId", updateItem);
 router.get("/", getItems);
 router.post("/", createItem);
 router.delete("/:itemId", deleteItem);

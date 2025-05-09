@@ -6,14 +6,14 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageURL } = req.body;
-  if (!name || !weather || !imageURL) {
+  const { name, weather, imageUrl } = req.body;
+  if (!name || !weather || !imageUrl) {
     return res.status(BadRequestError.statusCode).json({
       message: "Please provide name, weather and imageUrl",
     });
   }
   const owner = req.user._id;
-  return ClothingItem.create({ name, weather, imageURL, owner })
+  return ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).json(item.toObject());
     })
@@ -46,35 +46,35 @@ const getItems = (req, res) => {
     });
 };
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageURL } = req.body;
+// const updateItem = (req, res) => {
+//   const { itemId } = req.params;
+//   const { imageUrl } = req.body;
 
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
-    .orFail()
-    .then((item) => res.status(200).json(item))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NotFoundError.statusCode)
-          .json({ message: "Item not found" });
-      }
-      if (err.name === "CastError") {
-        return res
-          .status(BadRequestError.statusCode)
-          .json({ message: "Invalid item ID" });
-      }
-      if (err.name === "ValidationError") {
-        return res
-          .status(BadRequestError.statusCode)
-          .json({ message: "Invalid data provided" });
-      }
-      return res
-        .status(InternalServerError.statusCode)
-        .json({ message: "An error occurred on the server" });
-    });
-};
+//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
+//     .orFail()
+//     .then((item) => res.status(200).json(item))
+//     .catch((err) => {
+//       console.error(err);
+//       if (err.name === "DocumentNotFoundError") {
+//         return res
+//           .status(NotFoundError.statusCode)
+//           .json({ message: "Item not found" });
+//       }
+//       if (err.name === "CastError") {
+//         return res
+//           .status(BadRequestError.statusCode)
+//           .json({ message: "Invalid item ID" });
+//       }
+//       if (err.name === "ValidationError") {
+//         return res
+//           .status(BadRequestError.statusCode)
+//           .json({ message: "Invalid data provided" });
+//       }
+//       return res
+//         .status(InternalServerError.statusCode)
+//         .json({ message: "An error occurred on the server" });
+//     });
+// };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
