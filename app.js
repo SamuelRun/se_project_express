@@ -29,7 +29,3 @@ app.use("/", mainRouter);
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
-
-module.exports.createClothingItem = (req) => {
-  console.log(req.user._id);
-};

@@ -7,13 +7,8 @@ const {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  if (!name || !weather || !imageUrl) {
-    return res.status(BadRequestError.statusCode).json({
-      message: "Please provide name, weather and imageUrl",
-    });
-  }
   const owner = req.user._id;
-  return ClothingItem.create({ name, weather, imageUrl, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).json(item.toObject());
     })
@@ -50,13 +45,8 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
+    .orFail()
     .then((item) => {
-      if (!item) {
-        return res
-          .status(NotFoundError.statusCode)
-          .json({ message: "Item not found" });
-      }
-
       if (item.owner.toString() !== req.user._id) {
         return res
           .status(403)
@@ -69,6 +59,11 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NotFoundError.statusCode)
+          .json({ message: "Item not found" });
+      }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
