@@ -3,6 +3,7 @@ const {
   BadRequestError,
   NotFoundError,
   InternalServerError,
+  ForbiddenError,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -49,13 +50,13 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findById(itemId)
     .then((item) => {
-      if (!item) {
-        return res.status(404).json({ message: "Item not found" });
+      if (item.owner.toString() !== req.user._id) {
+        throw new ForbiddenError(
+          "You don't have permission to delete this item"
+        );
       }
-      if (!req.user || item.owner.toString() !== req.user._id) {
-        return res
-          .status(403)
-          .json({ message: "You don't have permission to delete this item" });
+      if (!item) {
+        throw new NotFoundError("Item not found");
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
@@ -63,10 +64,17 @@ const deleteItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status(400).json({ message: "Invalid item ID" });
+        return res
+          .status(BadRequestError.statusCode)
+          .json({ message: "Invalid item ID" });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(NotFoundError.statusCode)
+          .json({ message: "Item not found" });
       }
       return res
-        .status(500)
+        .status(InternalServerError.statusCode)
         .json({ message: "An error occurred on the server" });
     });
 };
