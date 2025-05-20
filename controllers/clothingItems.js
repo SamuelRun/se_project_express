@@ -52,15 +52,14 @@ const deleteItem = (req, res) => {
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
-      if (item.owner.toString() !== req.user._id) {
+      if (!req.user || item.owner.toString() !== req.user._id) {
         return res
           .status(403)
           .json({ message: "You don't have permission to delete this item" });
       }
-      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
-        res.status(200).json(deletedItem)
-      );
+      return ClothingItem.findByIdAndDelete(itemId);
     })
+    .then((deletedItem) => res.status(200).json(deletedItem))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
