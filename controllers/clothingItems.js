@@ -46,47 +46,26 @@ const getItems = (req, res) => {
     });
 };
 
-// const updateItem = (req, res) => {
-//   const { itemId } = req.params;
-//   const { imageUrl } = req.body;
-
-//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-//     .orFail()
-//     .then((item) => res.status(200).json(item))
-//     .catch((err) => {
-//       console.error(err);
-//       if (err.name === "DocumentNotFoundError") {
-//         return res
-//           .status(NotFoundError.statusCode)
-//           .json({ message: "Item not found" });
-//       }
-//       if (err.name === "CastError") {
-//         return res
-//           .status(BadRequestError.statusCode)
-//           .json({ message: "Invalid item ID" });
-//       }
-//       if (err.name === "ValidationError") {
-//         return res
-//           .status(BadRequestError.statusCode)
-//           .json({ message: "Invalid data provided" });
-//       }
-//       return res
-//         .status(InternalServerError.statusCode)
-//         .json({ message: "An error occurred on the server" });
-//     });
-// };
-
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  return ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .then((item) => {
       if (!item) {
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
       }
-      return res.status(200).json({ message: "Item deleted successfully" }); // Added "return" here
+
+      if (item.owner.toString() !== req.user._id) {
+        return res
+          .status(403)
+          .json({ message: "You don't have permission to delete this item" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then((item) => {
+      res.status(200).json({ message: "Item deleted successfully" });
     })
     .catch((err) => {
       console.error(err);
@@ -154,7 +133,6 @@ const dislikeItem = (req, res) =>
 module.exports = {
   createItem,
   getItems,
-  // updateItem,
   deleteItem,
   likeItem,
   dislikeItem,
