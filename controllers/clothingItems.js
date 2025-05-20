@@ -45,25 +45,29 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
-    .orFail()
     .then((item) => {
+      if (!item) {
+        return res
+          .status(NotFoundError.statusCode)
+          .json({ message: "Item not found" });
+      }
       if (item.owner.toString() !== req.user._id) {
         return res
           .status(403)
           .json({ message: "You don't have permission to delete this item" });
       }
-      return ClothingItem.findByIdAndDelete(itemId).orFail();
+      return ClothingItem.findByIdAndDelete(itemId);
     })
-    .then(() => {
-      res.status(200).json({ message: "Item deleted successfully" });
-    })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
+    .then((deletedItem) => {
+      if (!deletedItem) {
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
       }
+      res.status(200).json({ message: "Item deleted successfully" });
+    })
+    .catch((err) => {
+      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
