@@ -1,7 +1,7 @@
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../utils/config.js");
+const User = require("../models/user");
+const { JWT_SECRET } = require("../utils/config");
 const {
   BadRequestError,
   NotFoundError,
@@ -24,9 +24,9 @@ const createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hashedPassword) => {
-      return User.create({ name, avatar, email, password: hashedPassword });
-    })
+    .then((hashedPassword) =>
+      User.create({ name, avatar, email, password: hashedPassword })
+    )
     .then((user) => {
       const userResponse = user.toObject();
       delete userResponse.password;
@@ -81,7 +81,7 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(401).send({ message: "Incorrect email or password" });
     });
 };
