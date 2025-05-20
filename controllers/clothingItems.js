@@ -56,6 +56,9 @@ const deleteItem = (req, res) => {
           "You don't have permission to delete this item"
         );
       }
+      if (!item) {
+        return res.status(404).json({ message: "Item not found" });
+      }
       return ClothingItem.findByIdAndDelete(itemId);
     })
     .then((deletedItem) => res.status(200).json(deletedItem))
