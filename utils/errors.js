@@ -1,4 +1,5 @@
 const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 const INTERNAL_SERVER_ERROR = 500;
 
@@ -8,6 +9,13 @@ function BadRequestError(message) {
 }
 
 BadRequestError.statusCode = BAD_REQUEST;
+
+function ForbiddenError(message) {
+  this.statusCode = FORBIDDEN;
+  this.message = message;
+}
+
+ForbiddenError.statusCode = FORBIDDEN;
 
 function NotFoundError(message) {
   this.statusCode = NOT_FOUND;
@@ -23,4 +31,9 @@ function InternalServerError(message) {
 
 InternalServerError.statusCode = INTERNAL_SERVER_ERROR;
 
-module.exports = { BadRequestError, NotFoundError, InternalServerError };
+module.exports = {
+  BadRequestError,
+  NotFoundError,
+  InternalServerError,
+  ForbiddenError,
+};
