@@ -8,9 +8,9 @@ const auth = require("../middlewares/auth");
 router.post("/signin", login);
 router.post("/signup", createUser);
 
-router.use("/users", auth, userRouter);
-router.get("/items", clothingItem);
-router.use("/items", auth, clothingItem);
+router.use(auth);
+router.use("/users", userRouter);
+router.use("/items", clothingItem);
 
 router.use((req, res) =>
   res.status(NotFoundError.statusCode).json({ message: "Item not found" })
