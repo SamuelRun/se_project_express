@@ -10,7 +10,7 @@ const createItem = (req, res) => {
   const owner = req.user._id;
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      res.status(201).json(item.toObject());
+      res.status(201).json(item);
     })
     .catch((err) => {
       console.error(err);
@@ -52,7 +52,7 @@ const deleteItem = (req, res) => {
           .status(403)
           .json({ message: "You don't have permission to delete this item" });
       }
-      return ClothingItem.findByIdAndDelete(itemId);
+      return ClothingItem.findByIdAndDelete(itemId).orFail();
     })
     .then(() => {
       res.status(200).json({ message: "Item deleted successfully" });
