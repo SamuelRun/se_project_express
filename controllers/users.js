@@ -6,6 +6,7 @@ const {
   BadRequestError,
   NotFoundError,
   InternalServerError,
+  UnauthorizedError,
   ConflictError,
 } = require("../utils/errors");
 
@@ -20,7 +21,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const userResponse = user.toObject();
       delete userResponse.password;
-      res.status(201).json(userResponse);
+      return res.status(201).json(userResponse);
     })
     .catch((err) => {
       console.error(err);
