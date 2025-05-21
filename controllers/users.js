@@ -6,18 +6,8 @@ const {
   BadRequestError,
   NotFoundError,
   InternalServerError,
+  ConflictError,
 } = require("../utils/errors");
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).json(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(InternalServerError.statusCode)
-        .json({ message: "An error occurred on the server" });
-    });
-};
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -39,9 +29,9 @@ const createUser = (req, res) => {
           .status(BadRequestError.statusCode)
           .json({ message: "Invalid data provided" });
       }
-      if (err.code === 11000) {
+      if (err.code === "11000") {
         return res
-          .status(409)
+          .status(ConflictError.statusCode)
           .json({ message: "This email is already in use" });
       }
       return res
@@ -74,6 +64,12 @@ const getCurrentUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BadRequestError.statusCode)
+      .json({ message: "Email and password are required" });
+  }
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -81,8 +77,15 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch(() => {
-      res.status(401).send({ message: "Incorrect email or password" });
+    .catch((err) => {
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UnauthorizedError.statusCode)
+          .json({ message: "Incorrect email or password" });
+      }
+      return res
+        .status(InternalServerError.statusCode)
+        .json({ message: "An error has occurred on the server" });
     });
 };
 
@@ -114,7 +117,6 @@ const updateCurrentUser = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   createUser,
   getCurrentUser,
   login,

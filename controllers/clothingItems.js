@@ -49,14 +49,11 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
-    .then((item) => {
+    .orFail.then((item) => {
       if (item.owner.toString() !== req.user._id) {
         throw new ForbiddenError(
           "You don't have permission to delete this item"
         );
-      }
-      if (!item) {
-        throw new NotFoundError("Item not found");
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
@@ -118,6 +115,11 @@ const dislikeItem = (req, res) =>
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
+      }
+      if (err.name === "ForbiddenError") {
+        return res
+          .status(ForbiddenError.statusCode)
+          .json({ message: "You do not have the permissions to do this" });
       }
       if (err.name === "CastError") {
         return res
