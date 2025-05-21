@@ -71,15 +71,15 @@ const login = (req, res) => {
       .status(BadRequestError.statusCode)
       .json({ message: "Email and password are required" });
   }
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      return res.send({ token });
     })
     .catch((err) => {
-      if (err.message === "Incorrect email or password") {
+      if (err.name === "UnauthorizedError") {
         return res
           .status(UnauthorizedError.statusCode)
           .json({ message: "Incorrect email or password" });
