@@ -30,7 +30,7 @@ const createUser = (req, res) => {
           .status(BadRequestError.statusCode)
           .json({ message: "Invalid data provided" });
       }
-      if (err.code === "11000") {
+      if (err.code === 11000) {
         return res
           .status(ConflictError.statusCode)
           .json({ message: "This email is already in use" });
@@ -79,7 +79,7 @@ const login = (req, res) => {
       return res.send({ token });
     })
     .catch((err) => {
-      if (err.name === "UnauthorizedError") {
+      if (err.message === "Incorrect email or password") {
         return res
           .status(UnauthorizedError.statusCode)
           .json({ message: "Incorrect email or password" });

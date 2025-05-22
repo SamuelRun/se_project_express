@@ -49,7 +49,8 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findById(itemId)
-    .orFail.then((item) => {
+    .orFail()
+    .then((item) => {
       if (item.owner.toString() !== req.user._id) {
         throw new ForbiddenError(
           "You don't have permission to delete this item"
@@ -60,6 +61,11 @@ const deleteItem = (req, res) => {
     .then((deletedItem) => res.status(200).json(deletedItem))
     .catch((err) => {
       console.error(err);
+      if (err.statusCode === 403) {
+        return res
+          .status(ForbiddenError.statusCode)
+          .json({ message: "You do not have the permissions to do this" });
+      }
       if (err.name === "CastError") {
         return res
           .status(BadRequestError.statusCode)
@@ -115,11 +121,6 @@ const dislikeItem = (req, res) =>
         return res
           .status(NotFoundError.statusCode)
           .json({ message: "Item not found" });
-      }
-      if (err.name === "ForbiddenError") {
-        return res
-          .status(ForbiddenError.statusCode)
-          .json({ message: "You do not have the permissions to do this" });
       }
       if (err.name === "CastError") {
         return res
